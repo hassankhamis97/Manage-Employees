@@ -8,6 +8,7 @@ import androidx.room.Query;
 import androidx.room.Transaction;
 
 import com.example.employees.POJOs.Employee;
+import com.example.employees.POJOs.EmployeeSkillCrossRef;
 import com.example.employees.POJOs.EmployeeWithSkills;
 import com.example.employees.POJOs.Skill;
 
@@ -20,7 +21,7 @@ public interface EmployeeWithSkillsDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     public long insert(Skill skill);
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    public void insert(EmployeeWithSkills employeeWithSkills);
+    public void insert(EmployeeSkillCrossRef employeeSkillCrossRef);
     @Query("DELETE FROM skill_table")
     void deleteAllSkills();
     @Transaction

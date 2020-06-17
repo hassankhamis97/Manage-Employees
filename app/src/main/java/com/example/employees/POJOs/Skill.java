@@ -13,4 +13,12 @@ public class Skill {
         this.skillId = skillId;
         this.name = name;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getSkillId() {
+        return skillId;
+    }
 }

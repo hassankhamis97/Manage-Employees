@@ -16,21 +16,22 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @Database(entities = {Employee.class, Skill.class, EmployeeSkillCrossRef.class}, version = 1, exportSchema = false)
-public abstract class AppDatabase extends RoomDatabase {
+public abstract class EmployeeRoomDatabase extends RoomDatabase {
     public abstract EmployeeWithSkillsDao employeeWithSkillsDao();
 
-    private static volatile AppDatabase INSTANCE;
+    private static volatile EmployeeRoomDatabase INSTANCE;
     private static final int NUMBER_OF_THREADS = 4;
-    static final ExecutorService databaseWriteExecutor =
+    public static final ExecutorService databaseWriteExecutor =
             Executors.newFixedThreadPool(NUMBER_OF_THREADS);
 
-    static AppDatabase getDatabase(final Context context) {
+    public static EmployeeRoomDatabase getDatabase(final Context context) {
         if (INSTANCE == null) {
-            synchronized (AppDatabase.class) {
+            synchronized (EmployeeRoomDatabase.class) {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
-                            AppDatabase.class, "employee_database")
+                            EmployeeRoomDatabase.class, "employee_database")
                             .addCallback(sRoomDatabaseCallback)
+                            .allowMainThreadQueries()
                             .build();
                 }
             }
@@ -46,7 +47,7 @@ public abstract class AppDatabase extends RoomDatabase {
             // comment out the following block
             databaseWriteExecutor.execute(() -> {
                 // Populate the database in the background.
-                // If you want to start with more words, just add them.
+                // If you want to start with more Skills, just add them.
                 EmployeeWithSkillsDao dao = INSTANCE.employeeWithSkillsDao();
                 dao.deleteAllSkills();
 

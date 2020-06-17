@@ -4,6 +4,19 @@ import androidx.room.Entity;
 
 @Entity(primaryKeys = {"employeeId", "skillId"})
 public class EmployeeSkillCrossRef {
-    public long employeeId;
-    public long skillId;
+    private long employeeId;
+    private int skillId;
+
+    public EmployeeSkillCrossRef(long employeeId, int skillId) {
+        this.employeeId = employeeId;
+        this.skillId = skillId;
+    }
+
+    public long getEmployeeId() {
+        return employeeId;
+    }
+
+    public int getSkillId() {
+        return skillId;
+    }
 }
