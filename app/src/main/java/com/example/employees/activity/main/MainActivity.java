@@ -1,16 +1,19 @@
-package com.example.employees.activity;
+package com.example.employees.activity.main;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
 import com.example.employees.POJOs.Employee;
 import com.example.employees.POJOs.EmployeeWithSkills;
 import com.example.employees.POJOs.Skill;
 import com.example.employees.R;
+import com.example.employees.activity.add_employee.AddEmployeeActivity;
 import com.example.employees.viewModel.GetEmployeesViewModel;
 
 import java.util.ArrayList;
@@ -33,16 +36,21 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         // test
-        byte[] x = "Any String you want".getBytes();
-        Employee emp = new Employee("hassan","hassankhamis97@hotmail.com",x);
-        Skill skill1 = new Skill(1,"PHP");
-        Skill skill2 = new Skill(2,"fsd");
-        EmployeeWithSkills employeeWithSkills = new EmployeeWithSkills();
-        employeeWithSkills.employee = emp;
-        employeeWithSkills.skills = new ArrayList<>();
-        employeeWithSkills.skills.add(skill1);
-        employeeWithSkills.skills.add(skill2);
+//        byte[] x = "Any String you want".getBytes();
+//        Employee emp = new Employee("hassan","hassankhamis97@hotmail.com",x);
+//        Skill skill1 = new Skill(1,"PHP");
+//        Skill skill2 = new Skill(2,"fsd");
+//        EmployeeWithSkills employeeWithSkills = new EmployeeWithSkills();
+//        employeeWithSkills.employee = emp;
+//        employeeWithSkills.skills = new ArrayList<>();
+//        employeeWithSkills.skills.add(skill1);
+//        employeeWithSkills.skills.add(skill2);
+//
+//        employeesViewModel.insert(employeeWithSkills);
+    }
 
-        employeesViewModel.insert(employeeWithSkills);
+    public void addEmployeeBtn(View view) {
+        Intent intent = new Intent(this, AddEmployeeActivity.class);
+        startActivity(intent);
     }
 }

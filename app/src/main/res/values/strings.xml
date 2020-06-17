@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">employees</string>
+    <string name="profileImage">Profile Image</string>
+    <string name="save">save</string>
+    <string name="email">Email</string>
+    <string name="name">Name</string>
+    <string name="add_employee">Add Employee</string>
 </resources>

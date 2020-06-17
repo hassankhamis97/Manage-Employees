@@ -27,4 +27,6 @@ public interface EmployeeWithSkillsDao {
     @Transaction
     @Query("SELECT * from EMPLOYEE_TABLE")
     public LiveData<List<EmployeeWithSkills>> getEmployeeWithSkills();
+    @Query("SELECT * from skill_table")
+    public LiveData<List<Skill>> getSkills();
 }
