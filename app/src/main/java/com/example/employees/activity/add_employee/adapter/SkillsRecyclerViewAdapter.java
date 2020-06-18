@@ -1,4 +1,4 @@
-package com.example.employees.activity.add_employee.Adapter;
+package com.example.employees.activity.add_employee.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,7 +8,6 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.employees.POJOs.Skill;

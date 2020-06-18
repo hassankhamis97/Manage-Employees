@@ -42,4 +42,11 @@ public class EmployeeRepository {
 //        });
     }
 
+    public void deleteEmployee(EmployeeWithSkills employeeWithSkills) {
+        for (int i = 0 ; i < employeeWithSkills.skills.size() ; i++){
+            employeeWithSkillsDao.deleteEmployeeSkillCross(employeeWithSkills.employee.getEmployeeId(),employeeWithSkills.skills.get(i).getSkillId());
+        }
+        employeeWithSkillsDao.deleteEmployee(employeeWithSkills.employee);
+
+    }
 }

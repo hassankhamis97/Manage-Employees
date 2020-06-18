@@ -2,6 +2,7 @@ package com.example.employees.room;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
@@ -29,4 +30,9 @@ public interface EmployeeWithSkillsDao {
     public LiveData<List<EmployeeWithSkills>> getEmployeeWithSkills();
     @Query("SELECT * from skill_table")
     public LiveData<List<Skill>> getSkills();
+    @Delete
+    void deleteEmployee(Employee employee);
+
+    @Query("DELETE FROM EmployeeSkillCrossRef where employeeId = :employeeId and skillId = :skillId")
+    void deleteEmployeeSkillCross(long employeeId, int skillId);
 }

@@ -5,4 +5,7 @@
     <string name="email">Email</string>
     <string name="name">Name</string>
     <string name="add_employee">Add Employee</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="add_skills">Add skills</string>
 </resources>

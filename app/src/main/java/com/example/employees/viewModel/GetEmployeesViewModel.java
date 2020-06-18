@@ -24,4 +24,7 @@ public class GetEmployeesViewModel extends AndroidViewModel {
 
     public LiveData<List<EmployeeWithSkills>> getEmployeeWithSkills() { return employeesLiveData; }
 
+    public void deleteEmployee(EmployeeWithSkills employeeWithSkills) {
+        employeeRepository.deleteEmployee(employeeWithSkills);
+    }
 }

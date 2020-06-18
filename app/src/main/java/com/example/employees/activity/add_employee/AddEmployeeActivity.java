@@ -11,34 +11,29 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Base64;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.employees.POJOs.Employee;
 import com.example.employees.POJOs.EmployeeWithSkills;
 import com.example.employees.POJOs.Skill;
 import com.example.employees.R;
-import com.example.employees.activity.add_employee.Adapter.SkillsRecyclerViewAdapter;
-import com.example.employees.repository.EmployeeRepository;
-import com.example.employees.viewModel.GetEmployeesViewModel;
+import com.example.employees.activity.add_employee.adapter.SkillsRecyclerViewAdapter;
 import com.example.employees.viewModel.SkillsViewModel;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class AddEmployeeActivity extends AppCompatActivity {
     public static final String EXTRA_REPLY = "com.example.employees.REPLY";
@@ -48,7 +43,7 @@ public class AddEmployeeActivity extends AppCompatActivity {
     private AutoCompleteTextView autoCompleteTextView1;
     private RecyclerView skillsRecyclerView;
     private List<Skill> selectedSkills;
-    private ImageView profileImageView;
+    private CircleImageView profileImageView;
     private EmployeeWithSkills employeeWithSkills;
     private TextView employeeName;
     private TextView employeeEmail;
@@ -72,11 +67,8 @@ public class AddEmployeeActivity extends AppCompatActivity {
         skillsViewModel.getEmployeeWithSkills().observe(this, new Observer<List<Skill>>() {
             @Override
             public void onChanged(@Nullable final List<Skill> skills) {
-                // Update the cached copy of the words in the adapter.
                 AddEmployeeActivity.this.skills = skills;
                 autoCompleteTextView1.setAdapter(renderSkills());
-//                System.out.println(employeeWithSkills);
-//                adapter.setWords(words);
             }
         });
     }
@@ -97,7 +89,7 @@ public class AddEmployeeActivity extends AppCompatActivity {
                         SkillsRecyclerViewAdapter skillsRecyclerViewAdapter = new SkillsRecyclerViewAdapter(AddEmployeeActivity.this,selectedSkills);
                         skillsRecyclerView.setAdapter(skillsRecyclerViewAdapter);
                     }
-
+                    autoCompleteTextView1.setText("");
                 }
             }
         });
@@ -236,12 +228,17 @@ public class AddEmployeeActivity extends AppCompatActivity {
     }
 
     public void saveEmployee_BtnAction(View view) {
-        Intent replyIntent = new Intent();
-        employeeWithSkills.employee = new Employee(employeeName.getText().toString(),employeeEmail.getText().toString(),imageArray);
-        employeeWithSkills.skills = selectedSkills;
-        replyIntent.putExtra(EXTRA_REPLY, employeeWithSkills);
-        setResult(RESULT_OK, replyIntent);
-        finish();
+        if (employeeName.getText().toString().trim().isEmpty() == true) {
+            employeeName.setError("This field is required");
+        }
+        else {
+            Intent replyIntent = new Intent();
+            employeeWithSkills.employee = new Employee(employeeName.getText().toString(), employeeEmail.getText().toString(), imageArray);
+            employeeWithSkills.skills = selectedSkills;
+            replyIntent.putExtra(EXTRA_REPLY, employeeWithSkills);
+            setResult(RESULT_OK, replyIntent);
+            finish();
+        }
 
 //        skillsViewModel.insert(employeeWithSkills);
     }
