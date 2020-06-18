@@ -250,7 +250,11 @@ public class AddOrEditEmployeeActivity extends AppCompatActivity {
         employeeEmail.setText(savedInstanceState.getString("employeeEmail"));
         imageArray = savedInstanceState.getByteArray("imageArray");
         selectedSkills = savedInstanceState.getParcelableArrayList("selectedSkills");
-        skillsRecyclerView.setAdapter(skillsRecyclerViewAdapter);
+
+        if (selectedSkills.size() > 0) {
+            skillsRecyclerView.setAdapter(skillsRecyclerViewAdapter);
+        }
+
         if (imageArray != null)
             setImageArrayToImageView();
     }
@@ -262,7 +266,6 @@ public class AddOrEditEmployeeActivity extends AppCompatActivity {
         outState.putString("employeeEmail", employeeEmail.getText().toString());
         outState.putByteArray("imageArray", imageArray);
         outState.putParcelableArrayList("selectedSkills", (ArrayList<? extends Parcelable>) selectedSkills);
-//        outState.putParcelableArrayList("skillsList", (ArrayList<? extends Parcelable>) selectedSkills.to);
     }
 
 }
