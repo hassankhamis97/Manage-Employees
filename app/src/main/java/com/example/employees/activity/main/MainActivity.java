@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
     private GetEmployeesViewModel employeesViewModel;
     private RecyclerView employeesRecyclerView;
     public final int ADD_NEW_EMPLOYEE = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,23 +37,14 @@ public class MainActivity extends AppCompatActivity {
         employeesRecyclerView.setLayoutManager(layoutManager);
         employeesViewModel = new ViewModelProvider(this).get(GetEmployeesViewModel.class);
         employeesViewModel.getEmployeeWithSkills().observe(this, new Observer<List<EmployeeWithSkills>>() {
+
             @Override
             public void onChanged(@Nullable final List<EmployeeWithSkills> employeeWithSkills) {
-                System.out.println(employeeWithSkills);
                 EmployeesRecyclerViewAdapter employeesRecyclerViewAdapter = EmployeesRecyclerViewAdapter.getInstance(MainActivity.this,employeesViewModel);
                 employeesRecyclerViewAdapter.fillEmployeeArray(employeeWithSkills);
                 employeesRecyclerView.setAdapter(employeesRecyclerViewAdapter);
             }
         });
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        EmployeeRoomDatabase db = EmployeeRoomDatabase.getDatabase(this);
-        EmployeeWithSkillsDao employeeWithSkillsDao = db.employeeWithSkillsDao();
-        List<EmployeeSkillCrossRef> x = employeeWithSkillsDao.getEmployeeSkillCrossRef();
-        System.out.println(x);
     }
 
     public void addEmployeeBtn(View view) {

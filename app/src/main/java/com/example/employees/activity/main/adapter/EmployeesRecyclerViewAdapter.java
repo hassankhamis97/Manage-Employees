@@ -7,6 +7,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,12 +66,13 @@ public class EmployeesRecyclerViewAdapter extends RecyclerView.Adapter<Employees
     @Override
     public void onBindViewHolder(@NonNull EmployeesRecyclerViewAdapter.ViewHolder holder, int position) {
         holder.nameLbl.setText(employeeWithSkillsList.get(position).employee.getName());
-//        holder.emailLbl.setText(employeeWithSkillsList.get(position).employee.getEmail().isEmpty() == false ? employeeWithSkillsList.get(position).employee.getEmail() : "");
         holder.emailLbl.setText(employeeWithSkillsList.get(position).employee.getEmail());
+
         if (employeeWithSkillsList.get(position).employee.getImage() != null) {
             byte[] bitmapdata = employeeWithSkillsList.get(position).employee.getImage();
             Bitmap bitmap = BitmapFactory.decodeByteArray(bitmapdata, 0, bitmapdata.length);
-            holder.employeeImage.setImageBitmap(bitmap);
+
+            holder.employeeImage.setImageBitmap(getRoundedTopLeftCornerBitmap(bitmap,120));
         }
         else {
             holder.employeeImage.setImageResource(R.drawable.default_profile_image);
@@ -124,4 +131,31 @@ public class EmployeesRecyclerViewAdapter extends RecyclerView.Adapter<Employees
             }
         }
     };
+    public static Bitmap getRoundedTopLeftCornerBitmap(Bitmap bitmap, int pixels) {
+        Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap
+                .getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(output);
+
+        final int color = 0xff424242;
+        final Paint paint = new Paint();
+        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+        final RectF rectF = new RectF(rect);
+        final float roundPx = pixels;
+        final Rect topRightRect = new Rect(bitmap.getWidth()/2, 0, bitmap.getWidth(), bitmap.getHeight()/2);
+        final Rect bottomRightRect = new Rect(bitmap.getWidth()/2, bitmap.getHeight()/2, bitmap.getWidth(), bitmap.getHeight());
+
+        paint.setAntiAlias(true);
+        canvas.drawARGB(0, 0, 0, 0);
+        paint.setColor(color);
+        canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
+        // Fill in upper right corner
+        canvas.drawRect(topRightRect, paint);
+        // Fill in bottom right corners
+        canvas.drawRect(bottomRightRect, paint);
+
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawBitmap(bitmap, rect, rect, paint);
+
+        return output;
+    }
 }

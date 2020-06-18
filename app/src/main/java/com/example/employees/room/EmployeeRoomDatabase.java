@@ -27,6 +27,7 @@ public abstract class EmployeeRoomDatabase extends RoomDatabase {
     public static EmployeeRoomDatabase getDatabase(final Context context) {
         if (INSTANCE == null) {
             synchronized (EmployeeRoomDatabase.class) {
+
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                             EmployeeRoomDatabase.class, "employee_database")

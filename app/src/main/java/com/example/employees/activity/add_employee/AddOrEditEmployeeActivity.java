@@ -1,5 +1,6 @@
 package com.example.employees.activity.add_employee;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
@@ -15,11 +16,13 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -46,6 +49,7 @@ public class AddOrEditEmployeeActivity extends AppCompatActivity {
     private EmployeeWithSkills employeeWithSkills;
     private TextView employeeName;
     private TextView employeeEmail;
+    private Button save_edit_Btn;
     byte[] imageArray;
     boolean isEdit;
     SkillsRecyclerViewAdapter skillsRecyclerViewAdapter;
@@ -59,13 +63,25 @@ public class AddOrEditEmployeeActivity extends AppCompatActivity {
         employeeEmail = findViewById(R.id.email_txt);
         profileImageView = findViewById(R.id.profileImageView);
         skillsRecyclerView = findViewById(R.id.skillsRecyclerView);
+        save_edit_Btn = findViewById(R.id.save_Edit_Employee_Btn);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(RecyclerView.HORIZONTAL);
         skillsRecyclerView.setLayoutManager(layoutManager);
         skillsViewModel = new ViewModelProvider(this).get(SkillsViewModel.class);
         selectedSkills = new ArrayList<>();
         employeeWithSkills = new EmployeeWithSkills();
-//        employeeWithSkills.employee = new Employee();
+
+        skillsRecyclerViewAdapter = SkillsRecyclerViewAdapter.getInstance(AddOrEditEmployeeActivity.this);
+        isEdit = getIntent().getBooleanExtra("isEdit",false);
+        if (isEdit){
+            save_edit_Btn.setText("Edit");
+            fillData();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         skillsViewModel.getEmployeeWithSkills().observe(this, new Observer<List<Skill>>() {
             @Override
             public void onChanged(@Nullable final List<Skill> skills) {
@@ -73,22 +89,16 @@ public class AddOrEditEmployeeActivity extends AppCompatActivity {
                 autoCompleteTextView1.setAdapter(renderSkills());
             }
         });
-        skillsRecyclerViewAdapter = SkillsRecyclerViewAdapter.getInstance(AddOrEditEmployeeActivity.this);
-        isEdit = getIntent().getBooleanExtra("isEdit",false);
-        if (isEdit){
-            fillData();
-        }
     }
-
 
     private void fillData() {
         employeeWithSkills = (EmployeeWithSkills) getIntent().getSerializableExtra("employeeWithSkills");
         employeeName.setText(employeeWithSkills.employee.getName());
         employeeEmail.setText(employeeWithSkills.employee.getEmail());
+
         if (employeeWithSkills.employee.getImage() != null) {
             imageArray = employeeWithSkills.employee.getImage();
-            Bitmap bitmap = BitmapFactory.decodeByteArray(imageArray, 0, imageArray.length);
-            profileImageView.setImageBitmap(bitmap);
+            setImageArrayToImageView();
         }
         else {
             profileImageView.setImageResource(R.drawable.default_profile_image);
@@ -98,8 +108,15 @@ public class AddOrEditEmployeeActivity extends AppCompatActivity {
         skillsRecyclerView.setAdapter(skillsRecyclerViewAdapter);
     }
 
+    private void setImageArrayToImageView() {
+
+        Bitmap bitmap = BitmapFactory.decodeByteArray(imageArray, 0, imageArray.length);
+        profileImageView.setImageBitmap(bitmap);
+    }
+
     private ArrayAdapter<String> renderSkills() {
         skillsStr = new String[skills.size()];
+
         for (int i = 0; i < skills.size(); i++) {
             skillsStr[i] = skills.get(i).getName();
         }
@@ -108,8 +125,10 @@ public class AddOrEditEmployeeActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View arg1, int position, long arg3) {
                 Object item = parent.getItemAtPosition(position);
+
                 if (item instanceof String){
                     String skillName=(String) item;
+
                     if(selectedSkills.stream().filter(f-> f.getName() == skillName).count() == 0){
                         selectedSkills.add(skills.stream().filter(f-> f.getName() == skillName).findFirst().get()) ;
                         skillsRecyclerViewAdapter.fillSkillsArray(selectedSkills);
@@ -150,30 +169,22 @@ public class AddOrEditEmployeeActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
         if (resultCode != RESULT_CANCELED) {
             switch (requestCode) {
                 case 0:
                     if (resultCode == RESULT_OK && data != null) {
                         Bitmap selectedImage = (Bitmap) data.getExtras().get("data");
-                        Bitmap resizedImageBitmap = getResizedBitmap(selectedImage, 500);
-                        profileImageView.setImageBitmap(resizedImageBitmap);
+                        resizeImageAndConvertToArray(selectedImage);
 
-                        profileImageView.setImageBitmap(resizedImageBitmap);
-                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                        resizedImageBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                        imageArray = stream.toByteArray();
                     }
                     break;
                 case 1:
                     if (resultCode == RESULT_OK && data != null) {
                         Uri imageUri = data.getData();
                         try {
-                            Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
-                            Bitmap resizedImageBitmap = getResizedBitmap(bitmap, 500);
-                            profileImageView.setImageBitmap(resizedImageBitmap);
-                            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                            resizedImageBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                            imageArray = stream.toByteArray();
+                            Bitmap selectedImage = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
+                            resizeImageAndConvertToArray(selectedImage);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -182,11 +193,21 @@ public class AddOrEditEmployeeActivity extends AppCompatActivity {
             }
         }
     }
+
+    private void resizeImageAndConvertToArray(Bitmap selectedImage) {
+        Bitmap resizedImageBitmap = getResizedBitmap(selectedImage, 500);
+        profileImageView.setImageBitmap(resizedImageBitmap);
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        resizedImageBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        imageArray = stream.toByteArray();
+    }
+
     public Bitmap getResizedBitmap(Bitmap image, int maxSize) {
         int width = image.getWidth();
         int height = image.getHeight();
 
         float bitmapRatio = (float)width / (float) height;
+
         if (bitmapRatio > 1) {
             width = maxSize;
             height = (int) (width / bitmapRatio);
@@ -206,6 +227,7 @@ public class AddOrEditEmployeeActivity extends AppCompatActivity {
         }
         else {
             Intent replyIntent = new Intent();
+
             if (!isEdit) {
                 employeeWithSkills.employee = new Employee(employeeName.getText().toString(), employeeEmail.getText().toString(), imageArray);
             }
@@ -220,4 +242,27 @@ public class AddOrEditEmployeeActivity extends AppCompatActivity {
             finish();
         }
     }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        employeeName.setText(savedInstanceState.getString("employeeName"));
+        employeeEmail.setText(savedInstanceState.getString("employeeEmail"));
+        imageArray = savedInstanceState.getByteArray("imageArray");
+        selectedSkills = savedInstanceState.getParcelableArrayList("selectedSkills");
+        skillsRecyclerView.setAdapter(skillsRecyclerViewAdapter);
+        if (imageArray != null)
+            setImageArrayToImageView();
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("employeeName", employeeName.getText().toString());
+        outState.putString("employeeEmail", employeeEmail.getText().toString());
+        outState.putByteArray("imageArray", imageArray);
+        outState.putParcelableArrayList("selectedSkills", (ArrayList<? extends Parcelable>) selectedSkills);
+//        outState.putParcelableArrayList("skillsList", (ArrayList<? extends Parcelable>) selectedSkills.to);
+    }
+
 }

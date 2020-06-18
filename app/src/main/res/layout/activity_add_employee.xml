@@ -1,27 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:app="http://schemas.android.com/apk/res-auto"
-xmlns:tools="http://schemas.android.com/tools"
-android:layout_width="match_parent"
-android:layout_height="match_parent"
-android:orientation="vertical"
-tools:context=".activity.add_employee.AddOrEditEmployeeActivity">
+<!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--xmlns:app="http://schemas.android.com/apk/res-auto"-->
+<!--xmlns:tools="http://schemas.android.com/tools"-->
+<!--android:layout_width="match_parent"-->
+<!--android:layout_height="match_parent"-->
+<!--android:orientation="vertical"-->
+<!--tools:context=".activity.add_employee.AddOrEditEmployeeActivity">-->
 
-    <ScrollView
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        tools:context=".activity.add_employee.AddOrEditEmployeeActivity">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
 
-            <FrameLayout
+<!--            <FrameLayout-->
+<!--                android:layout_width="50dp"-->
+<!--                android:layout_height="50dp"-->
+<!--                android:layout_marginTop="200dp"-->
+<!--                android:translationZ="100dp"-->
+<!--                app:layout_constraintEnd_toEndOf="parent"-->
+<!--                app:layout_constraintStart_toStartOf="parent"-->
+<!--                app:layout_constraintTop_toTopOf="parent">-->
+            <androidx.cardview.widget.CardView
+
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_marginTop="200dp"
+                android:elevation="5dp"
+                android:padding="20dp"
                 android:translationZ="100dp"
+                app:cardBackgroundColor="@android:color/darker_gray"
+                app:cardCornerRadius="25dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -31,11 +47,14 @@ tools:context=".activity.add_employee.AddOrEditEmployeeActivity">
                     style="@android:style/Widget.Material.Light.ImageButton"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="#FFF"
+                    android:background="#CFCFCF"
+                    android:contentDescription="@string/pickImage"
                     android:onClick="chooseImageBtnAction"
+                    android:padding="10dp"
                     android:scaleType="centerInside"
                     app:srcCompat="@drawable/camera" />
-            </FrameLayout>
+            </androidx.cardview.widget.CardView>
+<!--            </FrameLayout>-->
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardViewAddEmp"
@@ -51,6 +70,7 @@ tools:context=".activity.add_employee.AddOrEditEmployeeActivity">
                     android:id="@+id/profileImageView"
                     android:layout_width="200dp"
                     android:layout_height="200dp"
+                    android:contentDescription="@string/profileImage"
                     android:scaleType="fitXY"
                     android:src="@drawable/default_profile_image" />
             </androidx.cardview.widget.CardView>
@@ -66,6 +86,7 @@ tools:context=".activity.add_employee.AddOrEditEmployeeActivity">
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="parent"
+                android:autofillHints="@string/email"
                 app:layout_constraintTop_toBottomOf="@+id/email_txt" />
 
             <androidx.recyclerview.widget.RecyclerView
@@ -89,6 +110,7 @@ tools:context=".activity.add_employee.AddOrEditEmployeeActivity">
                 android:layout_marginEnd="24dp"
                 android:ems="10"
                 android:hint="@string/name"
+                android:autofillHints="@string/name"
                 android:inputType="textPersonName"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -102,19 +124,21 @@ tools:context=".activity.add_employee.AddOrEditEmployeeActivity">
                 android:layout_marginEnd="24dp"
                 android:ems="10"
                 android:hint="@string/email"
-                android:inputType="textPersonName|textEmailAddress"
+                android:autofillHints="@string/email"
+                android:inputType="textEmailAddress"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/name_txt" />
 
             <Button
-                android:id="@+id/saveEmployee_Btn"
+                android:id="@+id/save_Edit_Employee_Btn"
                 style="@android:style/Widget.Material.Button"
                 android:layout_width="0dp"
-                android:layout_height="47dp"
-                android:layout_marginStart="50dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="32dp"
                 android:layout_marginTop="40dp"
-                android:layout_marginEnd="50dp"
+                android:layout_marginEnd="32dp"
+                android:layout_marginBottom="20dp"
                 android:background="@drawable/rounded_button"
                 android:onClick="saveEmployee_BtnAction"
                 android:text="@string/save"
@@ -131,4 +155,4 @@ tools:context=".activity.add_employee.AddOrEditEmployeeActivity">
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 
-</LinearLayout>
+<!--</LinearLayout>-->

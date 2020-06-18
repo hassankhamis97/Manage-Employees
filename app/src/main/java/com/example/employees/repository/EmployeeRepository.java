@@ -31,13 +31,12 @@ public class EmployeeRepository {
         return employeesLiveData;
     }
     public void insert(EmployeeWithSkills employeeWithSkills) {
-//        EmployeeRoomDatabase.databaseWriteExecutor.execute(() -> {
            long employeeId = employeeWithSkillsDao.insert(employeeWithSkills.employee);
+
            for (int i = 0 ; i < employeeWithSkills.skills.size() ; i++){
                employeeWithSkillsDao.insert(new EmployeeSkillCrossRef(employeeId,employeeWithSkills.skills.get(i).getSkillId()));
            }
         employeesLiveData = employeeWithSkillsDao.getEmployeeWithSkills();
-//        });
     }
 
     public void deleteEmployee(EmployeeWithSkills employeeWithSkills) {
@@ -48,6 +47,7 @@ public class EmployeeRepository {
 
     public void updateEmployee(EmployeeWithSkills employeeWithSkills) {
         employeeWithSkillsDao.deleteEmployeeSkillCross(employeeWithSkills.employee.getEmployeeId());
+
         for (int i = 0 ; i < employeeWithSkills.skills.size() ; i++){
             employeeWithSkillsDao.insert(new EmployeeSkillCrossRef(employeeWithSkills.employee.getEmployeeId(),employeeWithSkills.skills.get(i).getSkillId()));
         }
