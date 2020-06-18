@@ -43,5 +43,4 @@ dependencies {
     annotationProcessor "androidx.lifecycle:lifecycle-compiler:$rootProject.archLifecycleVersion"
     // UI
     implementation "com.google.android.material:material:$rootProject.materialVersion"
-    implementation 'de.hdodenhof:circleimageview:3.1.0'
 }

@@ -6,7 +6,7 @@ xmlns:tools="http://schemas.android.com/tools"
 android:layout_width="match_parent"
 android:layout_height="match_parent"
 android:orientation="vertical"
-tools:context=".activity.add_employee.AddEmployeeActivity">
+tools:context=".activity.add_employee.AddOrEditEmployeeActivity">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -17,18 +17,43 @@ tools:context=".activity.add_employee.AddEmployeeActivity">
             android:layout_height="wrap_content">
 
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/profileImageView"
+            <FrameLayout
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="200dp"
+                android:translationZ="100dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageButton
+                    android:id="@+id/chooseImageBtn"
+                    style="@android:style/Widget.Material.Light.ImageButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#FFF"
+                    android:onClick="chooseImageBtnAction"
+                    android:scaleType="centerInside"
+                    app:srcCompat="@drawable/camera" />
+            </FrameLayout>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardViewAddEmp"
                 android:layout_width="200dp"
                 android:layout_height="200dp"
-                android:layout_marginTop="30dp"
-                android:src="@drawable/default_profile_image"
-                app:civ_border_color="#FF000000"
-                app:civ_border_width="2dp"
+                android:layout_marginTop="20dp"
+                app:cardCornerRadius="100dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.497"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/profileImageView"
+                    android:layout_width="200dp"
+                    android:layout_height="200dp"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/default_profile_image" />
+            </androidx.cardview.widget.CardView>
 
             <AutoCompleteTextView
                 android:id="@+id/skillsAutoCompleteTextView"
@@ -55,32 +80,19 @@ tools:context=".activity.add_employee.AddEmployeeActivity">
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/skillsAutoCompleteTextView" />
 
-            <ImageButton
-                android:id="@+id/chooseImageBtn"
-                style="@android:style/Widget.Holo.Light.ImageButton"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginTop="-50dp"
-                android:onClick="chooseImageBtnAction"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.498"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/profileImageView"
-                app:srcCompat="@android:drawable/ic_menu_add" />
-
             <EditText
                 android:id="@+id/name_txt"
                 android:layout_width="0dp"
                 android:layout_height="56dp"
                 android:layout_marginStart="24dp"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="50dp"
                 android:layout_marginEnd="24dp"
                 android:ems="10"
                 android:hint="@string/name"
                 android:inputType="textPersonName"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/chooseImageBtn" />
+                app:layout_constraintTop_toBottomOf="@+id/cardViewAddEmp" />
 
             <EditText
                 android:id="@+id/email_txt"

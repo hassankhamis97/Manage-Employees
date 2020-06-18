@@ -18,9 +18,21 @@ import java.util.List;
 public class SkillsRecyclerViewAdapter extends RecyclerView.Adapter<SkillsRecyclerViewAdapter.ViewHolder> {
     List<Skill> selectedSkills;
     Context context;
-    public SkillsRecyclerViewAdapter(Context context, List<Skill> selectedSkills) {
-        this.context = context;
+    private static SkillsRecyclerViewAdapter instance = null;
+    public static SkillsRecyclerViewAdapter getInstance(Context context)
+    {
+        if (instance == null) {
+            instance = new SkillsRecyclerViewAdapter(context);
+        }
+
+        return instance;
+    }
+   public void fillSkillsArray(List<Skill> selectedSkills){
         this.selectedSkills = selectedSkills;
+    }
+    public SkillsRecyclerViewAdapter(Context context) {
+        this.context = context;
+
     }
     @NonNull
     @Override
@@ -40,7 +52,6 @@ public class SkillsRecyclerViewAdapter extends RecyclerView.Adapter<SkillsRecycl
             public void onClick(View v) {
                 selectedSkills.remove(position);
                 notifyItemRemoved(position);
-//                takeAction(tripName, position);
             }
         });
     }

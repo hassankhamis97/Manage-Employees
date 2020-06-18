@@ -11,22 +11,21 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
-import com.example.employees.POJOs.Employee;
+import com.example.employees.POJOs.EmployeeSkillCrossRef;
 import com.example.employees.POJOs.EmployeeWithSkills;
-import com.example.employees.POJOs.Skill;
 import com.example.employees.R;
-import com.example.employees.activity.add_employee.AddEmployeeActivity;
-import com.example.employees.activity.add_employee.adapter.SkillsRecyclerViewAdapter;
+import com.example.employees.activity.add_employee.AddOrEditEmployeeActivity;
 import com.example.employees.activity.main.adapter.EmployeesRecyclerViewAdapter;
+import com.example.employees.room.EmployeeRoomDatabase;
+import com.example.employees.room.EmployeeWithSkillsDao;
 import com.example.employees.viewModel.GetEmployeesViewModel;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private GetEmployeesViewModel employeesViewModel;
     private RecyclerView employeesRecyclerView;
-    public static final int NEW_WORD_ACTIVITY_REQUEST_CODE = 1;
+    public final int ADD_NEW_EMPLOYEE = 1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,31 +39,36 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onChanged(@Nullable final List<EmployeeWithSkills> employeeWithSkills) {
                 System.out.println(employeeWithSkills);
-                EmployeesRecyclerViewAdapter employeesRecyclerViewAdapter = new EmployeesRecyclerViewAdapter(MainActivity.this,employeeWithSkills,employeesViewModel);
+                EmployeesRecyclerViewAdapter employeesRecyclerViewAdapter = EmployeesRecyclerViewAdapter.getInstance(MainActivity.this,employeesViewModel);
+                employeesRecyclerViewAdapter.fillEmployeeArray(employeeWithSkills);
                 employeesRecyclerView.setAdapter(employeesRecyclerViewAdapter);
             }
         });
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        EmployeeRoomDatabase db = EmployeeRoomDatabase.getDatabase(this);
+        EmployeeWithSkillsDao employeeWithSkillsDao = db.employeeWithSkillsDao();
+        List<EmployeeSkillCrossRef> x = employeeWithSkillsDao.getEmployeeSkillCrossRef();
+        System.out.println(x);
+    }
+
     public void addEmployeeBtn(View view) {
-        Intent intent = new Intent(this, AddEmployeeActivity.class);
-        startActivityForResult(intent,1);
+        Intent intent = new Intent(this, AddOrEditEmployeeActivity.class);
+        intent.putExtra("isEdit",false);
+        startActivityForResult(intent,ADD_NEW_EMPLOYEE);
     }
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == NEW_WORD_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
-           Object emp = data.getSerializableExtra(AddEmployeeActivity.EXTRA_REPLY);
-           if (emp instanceof EmployeeWithSkills) {
-                EmployeeWithSkills employeeWithSkills = (EmployeeWithSkills) emp;
-               employeesViewModel.insert(employeeWithSkills);
-
-           }
-        } else {
-//            Toast.makeText(
-//                    getApplicationContext(),
-//                    R.string.empty_not_saved,
-//                    Toast.LENGTH_LONG).show();
+        if (requestCode == ADD_NEW_EMPLOYEE && resultCode == RESULT_OK) {
+            EmployeeWithSkills employeeWithSkills = (EmployeeWithSkills) data.getSerializableExtra(AddOrEditEmployeeActivity.EXTRA_REPLY);
+            employeesViewModel.insert(employeeWithSkills);
+        } else if (requestCode == EmployeesRecyclerViewAdapter.EDIT_EMPLOYEE && resultCode == RESULT_OK){
+            EmployeeWithSkills employeeWithSkills = (EmployeeWithSkills) data.getSerializableExtra(AddOrEditEmployeeActivity.EXTRA_REPLY);
+            employeesViewModel.updateEmployee(employeeWithSkills);
         }
     }
 }

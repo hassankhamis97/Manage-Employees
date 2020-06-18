@@ -1,15 +1,16 @@
 package com.example.employees.activity.main.adapter;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,22 +18,34 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.employees.POJOs.EmployeeWithSkills;
-import com.example.employees.POJOs.Skill;
 import com.example.employees.R;
-import com.example.employees.activity.add_employee.adapter.SkillsRecyclerViewAdapter;
+import com.example.employees.activity.add_employee.AddOrEditEmployeeActivity;
 import com.example.employees.viewModel.GetEmployeesViewModel;
 
 import java.util.List;
 
 public class EmployeesRecyclerViewAdapter extends RecyclerView.Adapter<EmployeesRecyclerViewAdapter.ViewHolder> {
+    private static EmployeesRecyclerViewAdapter instance = null;
     List<EmployeeWithSkills> employeeWithSkillsList;
     Context context;
     GetEmployeesViewModel employeesViewModel;
     int deleteItemPosition;
-    public EmployeesRecyclerViewAdapter(Context context, List<EmployeeWithSkills> employeeWithSkillsList, GetEmployeesViewModel employeesViewModel) {
+    public static final int EDIT_EMPLOYEE = 2;
+    public static EmployeesRecyclerViewAdapter getInstance(Context context,GetEmployeesViewModel employeesViewModel)
+    {
+        if (instance == null) {
+            instance = new EmployeesRecyclerViewAdapter(context,employeesViewModel);
+        }
+
+        return instance;
+    }
+    public EmployeesRecyclerViewAdapter(Context context,GetEmployeesViewModel employeesViewModel) {
         this.context = context;
         this.employeeWithSkillsList = employeeWithSkillsList;
         this.employeesViewModel = employeesViewModel;
+    }
+    public void fillEmployeeArray(List<EmployeeWithSkills> employeeWithSkillsList){
+        this.employeeWithSkillsList = employeeWithSkillsList;
     }
     @NonNull
     @Override
@@ -53,7 +66,6 @@ public class EmployeesRecyclerViewAdapter extends RecyclerView.Adapter<Employees
             byte[] bitmapdata = employeeWithSkillsList.get(position).employee.getImage();
             Bitmap bitmap = BitmapFactory.decodeByteArray(bitmapdata, 0, bitmapdata.length);
             holder.employeeImage.setImageBitmap(bitmap);
-//            holder.employeeImage.setClipToOutline(false);
         }
         else {
             holder.employeeImage.setImageResource(R.drawable.default_profile_image);
@@ -65,6 +77,16 @@ public class EmployeesRecyclerViewAdapter extends RecyclerView.Adapter<Employees
                 AlertDialog.Builder ab = new AlertDialog.Builder(context);
                 ab.setMessage("Are you sure to delete?").setPositiveButton("Yes", dialogClickListener)
                         .setNegativeButton("No", dialogClickListener).show();
+            }
+        });
+        holder.editEmployee_Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteItemPosition = position;
+                Intent intent = new Intent(context, AddOrEditEmployeeActivity.class);
+                intent.putExtra("isEdit",true);
+                intent.putExtra("employeeWithSkills",employeeWithSkillsList.get(position));
+                ((Activity) context).startActivityForResult(intent,EDIT_EMPLOYEE);
             }
         });
     }
@@ -96,11 +118,8 @@ public class EmployeesRecyclerViewAdapter extends RecyclerView.Adapter<Employees
             switch (which){
                 case DialogInterface.BUTTON_POSITIVE:
                     employeesViewModel.deleteEmployee(employeeWithSkillsList.get(deleteItemPosition));
-
                     break;
-
                 case DialogInterface.BUTTON_NEGATIVE:
-                    //Do your No progress
                     break;
             }
         }

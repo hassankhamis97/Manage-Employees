@@ -27,4 +27,8 @@ public class GetEmployeesViewModel extends AndroidViewModel {
     public void deleteEmployee(EmployeeWithSkills employeeWithSkills) {
         employeeRepository.deleteEmployee(employeeWithSkills);
     }
+
+    public void updateEmployee(EmployeeWithSkills employeeWithSkills) {
+        employeeRepository.updateEmployee(employeeWithSkills);
+    }
 }

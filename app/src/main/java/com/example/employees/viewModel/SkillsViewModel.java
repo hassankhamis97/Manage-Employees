@@ -5,7 +5,6 @@ import android.app.Application;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
-import com.example.employees.POJOs.EmployeeWithSkills;
 import com.example.employees.POJOs.Skill;
 import com.example.employees.repository.EmployeeRepository;
 import com.example.employees.repository.SkillRepository;
@@ -20,7 +19,7 @@ public class SkillsViewModel extends AndroidViewModel {
     public SkillsViewModel (Application application) {
         super(application);
         employeeRepository = EmployeeRepository.getInstance(application);
-        skillRepository = new SkillRepository(application);
+        skillRepository = SkillRepository.getInstance(application);
         skillsLiveData = skillRepository.getSkills();
     }
 

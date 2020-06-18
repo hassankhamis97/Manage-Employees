@@ -13,7 +13,7 @@ android:layout_height="wrap_content">
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
         app:cardCornerRadius="15dp"
-        app:cardElevation="2dp"
+        app:cardElevation="4dp"
 
 
         app:layout_constraintBottom_toBottomOf="parent"
@@ -70,7 +70,6 @@ android:layout_height="wrap_content">
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
                 android:layout_marginTop="16dp"
-                android:text="TextView"
                 app:layout_constraintStart_toEndOf="@+id/relativeLayout"
                 app:layout_constraintTop_toTopOf="parent" />
 

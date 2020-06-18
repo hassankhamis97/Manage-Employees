@@ -5,7 +5,6 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 import java.io.Serializable;
-import java.lang.reflect.Array;
 
 @Entity(tableName = "employee_table")
 public class Employee implements Serializable {
