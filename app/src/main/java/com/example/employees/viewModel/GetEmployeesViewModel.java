@@ -17,11 +17,11 @@ public class GetEmployeesViewModel extends AndroidViewModel {
 
     public GetEmployeesViewModel (Application application) {
         super(application);
-        employeeRepository = new EmployeeRepository(application);
+        employeeRepository = EmployeeRepository.getInstance(application);
         employeesLiveData = employeeRepository.getEmployeeWithSkills();
     }
+    public void insert(EmployeeWithSkills employeeWithSkills) { employeeRepository.insert(employeeWithSkills); }
 
     public LiveData<List<EmployeeWithSkills>> getEmployeeWithSkills() { return employeesLiveData; }
 
-    public void insert(EmployeeWithSkills employeeWithSkills) { employeeRepository.insert(employeeWithSkills); }
 }

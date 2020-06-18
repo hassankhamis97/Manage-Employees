@@ -4,10 +4,11 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import java.io.Serializable;
 import java.lang.reflect.Array;
 
 @Entity(tableName = "employee_table")
-public class Employee {
+public class Employee implements Serializable {
     @PrimaryKey(autoGenerate = true)
     private long employeeId;
     private String name;

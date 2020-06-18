@@ -14,10 +14,17 @@ import com.example.employees.room.EmployeeWithSkillsDao;
 import java.util.List;
 
 public class EmployeeRepository {
+    private static EmployeeRepository instance = null;
     private EmployeeWithSkillsDao employeeWithSkillsDao;
     private LiveData<List<EmployeeWithSkills>> employeesLiveData;
-
-    public EmployeeRepository(Application application) {
+    public static EmployeeRepository getInstance(Application application)
+    {
+        if (instance == null) {
+            instance = new EmployeeRepository(application);
+        }
+        return instance;
+    }
+    private EmployeeRepository(Application application) {
         EmployeeRoomDatabase db = EmployeeRoomDatabase.getDatabase(application);
         employeeWithSkillsDao = db.employeeWithSkillsDao();
         employeesLiveData = employeeWithSkillsDao.getEmployeeWithSkills();
@@ -31,6 +38,7 @@ public class EmployeeRepository {
            for (int i = 0 ; i < employeeWithSkills.skills.size() ; i++){
                employeeWithSkillsDao.insert(new EmployeeSkillCrossRef(employeeId,employeeWithSkills.skills.get(i).getSkillId()));
            }
+        employeesLiveData = employeeWithSkillsDao.getEmployeeWithSkills();
 //        });
     }
 

@@ -21,6 +21,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private GetEmployeesViewModel employeesViewModel;
+    public static final int NEW_WORD_ACTIVITY_REQUEST_CODE = 1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +52,23 @@ public class MainActivity extends AppCompatActivity {
 
     public void addEmployeeBtn(View view) {
         Intent intent = new Intent(this, AddEmployeeActivity.class);
-        startActivity(intent);
+        startActivityForResult(intent,1);
+    }
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == NEW_WORD_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
+           Object emp = data.getSerializableExtra(AddEmployeeActivity.EXTRA_REPLY);
+           if (emp instanceof EmployeeWithSkills) {
+                EmployeeWithSkills employeeWithSkills = (EmployeeWithSkills) emp;
+               employeesViewModel.insert(employeeWithSkills);
+
+           }
+        } else {
+//            Toast.makeText(
+//                    getApplicationContext(),
+//                    R.string.empty_not_saved,
+//                    Toast.LENGTH_LONG).show();
+        }
     }
 }

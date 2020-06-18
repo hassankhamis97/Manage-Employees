@@ -17,24 +17,31 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Base64;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.example.employees.POJOs.Employee;
 import com.example.employees.POJOs.EmployeeWithSkills;
 import com.example.employees.POJOs.Skill;
 import com.example.employees.R;
 import com.example.employees.activity.add_employee.Adapter.SkillsRecyclerViewAdapter;
+import com.example.employees.repository.EmployeeRepository;
 import com.example.employees.viewModel.GetEmployeesViewModel;
 import com.example.employees.viewModel.SkillsViewModel;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
 public class AddEmployeeActivity extends AppCompatActivity {
+    public static final String EXTRA_REPLY = "com.example.employees.REPLY";
     private SkillsViewModel skillsViewModel;
     private List<Skill> skills;
     private String[] skillsStr;
@@ -42,11 +49,17 @@ public class AddEmployeeActivity extends AppCompatActivity {
     private RecyclerView skillsRecyclerView;
     private List<Skill> selectedSkills;
     private ImageView profileImageView;
+    private EmployeeWithSkills employeeWithSkills;
+    private TextView employeeName;
+    private TextView employeeEmail;
+    byte[] imageArray;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_employee);
         autoCompleteTextView1 = (AutoCompleteTextView) findViewById(R.id.skillsAutoCompleteTextView);
+        employeeName = findViewById(R.id.name_txt);
+        employeeEmail = findViewById(R.id.email_txt);
         profileImageView = findViewById(R.id.profileImageView);
         skillsRecyclerView = findViewById(R.id.skillsRecyclerView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -54,6 +67,8 @@ public class AddEmployeeActivity extends AppCompatActivity {
         skillsRecyclerView.setLayoutManager(layoutManager);
         skillsViewModel = new ViewModelProvider(this).get(SkillsViewModel.class);
         selectedSkills = new ArrayList<>();
+        employeeWithSkills = new EmployeeWithSkills();
+//        employeeWithSkills.employee = new Employee();
         skillsViewModel.getEmployeeWithSkills().observe(this, new Observer<List<Skill>>() {
             @Override
             public void onChanged(@Nullable final List<Skill> skills) {
@@ -123,7 +138,13 @@ public class AddEmployeeActivity extends AppCompatActivity {
                 case 0:
                     if (resultCode == RESULT_OK && data != null) {
                         Bitmap selectedImage = (Bitmap) data.getExtras().get("data");
-                        profileImageView.setImageBitmap(selectedImage);
+                        Bitmap resizedImageBitmap = getResizedBitmap(selectedImage, 500);
+                        profileImageView.setImageBitmap(resizedImageBitmap);
+
+                        profileImageView.setImageBitmap(resizedImageBitmap);
+                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                        resizedImageBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                        imageArray = stream.toByteArray();
                     }
 
                     break;
@@ -143,21 +164,50 @@ public class AddEmployeeActivity extends AppCompatActivity {
 //                                cursor.close();
 //                            }
 //                        }
-                        Bitmap bitmap = null;
-                        Uri selectedImage = data.getData();
-                        String[] filePathColumn = { MediaStore.Images.Media.DATA };
 
-                        Cursor cursor = getContentResolver().query(selectedImage,
-                                filePathColumn, null, null, null);
-                        cursor.moveToFirst();
+//                        Uri selectedImage = data.getData();
+//                        String[] filePathColumn = { MediaStore.Images.Media.DATA };
+//
+//                        Cursor cursor = getContentResolver().query(selectedImage,
+//                                filePathColumn, null, null, null);
+//                        cursor.moveToFirst();
+//
+//                        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+//                        String picturePath = cursor.getString(columnIndex);
+//                        cursor.close();
+//
+//                        bitmap = BitmapFactory.decodeFile(picturePath);
+//                        profileImageView.setImageBitmap(bitmap);
+                        Uri imageUri = data.getData();
+                        try {
+                            Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
+                            Bitmap resizedImageBitmap = getResizedBitmap(bitmap, 500);
+                            profileImageView.setImageBitmap(resizedImageBitmap);
+                            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                            resizedImageBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                            imageArray = stream.toByteArray();
 
-                        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                        String picturePath = cursor.getString(columnIndex);
-                        cursor.close();
 
-                        bitmap = BitmapFactory.decodeFile(picturePath);
-                        profileImageView.setImageBitmap(bitmap);
-
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+//                        try {
+//                            bitmaps = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
+//
+//                            final ByteArrayOutputStream stream = new ByteArrayOutputStream();
+//                            bitmaps.compress(Bitmap.CompressFormat.PNG, 90, stream);
+//                            byte[] byteArray = stream.toByteArray();
+//
+//                           String encodeded = Base64.encodeToString(byteArray, Base64.DEFAULT);
+//
+//                            byte[] decodedString = Base64.decode(encodeded, Base64.DEFAULT);
+//                            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+//                            profileImageView.setImageBitmap(bitmaps);
+//
+////                            new UploadImage().execute();
+//                        } catch (IOException e) {
+//                            e.printStackTrace();
+//                        }
 //                        if (bitmap != null) {
 //                            ImageView rotate = (ImageView) findViewById(R.id.rotate);
 //
@@ -167,8 +217,32 @@ public class AddEmployeeActivity extends AppCompatActivity {
             }
         }
     }
+    public Bitmap getResizedBitmap(Bitmap image, int maxSize) {
+        int width = image.getWidth();
+        int height = image.getHeight();
 
+        float bitmapRatio = (float)width / (float) height;
+        if (bitmapRatio > 1) {
+            width = maxSize;
+            height = (int) (width / bitmapRatio);
+        } else {
+            height = maxSize;
+            width = (int) (height * bitmapRatio);
+        }
+        return Bitmap.createScaledBitmap(image, width, height, true);
+    }
     public void chooseImageBtnAction(View view) {
         selectImage(this);
+    }
+
+    public void saveEmployee_BtnAction(View view) {
+        Intent replyIntent = new Intent();
+        employeeWithSkills.employee = new Employee(employeeName.getText().toString(),employeeEmail.getText().toString(),imageArray);
+        employeeWithSkills.skills = selectedSkills;
+        replyIntent.putExtra(EXTRA_REPLY, employeeWithSkills);
+        setResult(RESULT_OK, replyIntent);
+        finish();
+
+//        skillsViewModel.insert(employeeWithSkills);
     }
 }
